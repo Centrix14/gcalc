@@ -45,7 +45,12 @@ void eq_bttn_click(GtkWidget *bttn, gpointer label) {
 			sprintf(tmp, "%d", num1*num2);
 			break;
 		case '/': 
-			sprintf(tmp, "%d", num1/num2);
+			if ( num2 != 0 )
+				sprintf(tmp, "%d", num1/num2);
+			else {
+				gtk_label_set_text(GTK_LABEL(label), "The surgery doesn't make sense.");
+				return;
+			}
 			break;
 	}
 	
@@ -111,6 +116,7 @@ int main(int argc, char *argv[]) {
 	bttn_eq = gtk_button_new_with_label("=");
 	bttn_c = gtk_button_new_with_label("C");
 
+	// Специальные кнопки
 	bttn_tn1 = gtk_button_new_with_label("TN1");
 	bttn_tn2 = gtk_button_new_with_label("TN2");
 	bttn_r = gtk_button_new_with_label("R");
@@ -177,6 +183,7 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(row4), bttn_eq, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row4), bttn_c, TRUE, FALSE, 5);
 
+	// Четвёртый ряд кнопок
 	gtk_box_pack_start(GTK_BOX(row5), bttn_tn1, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row5), bttn_tn2, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row5), bttn_r, TRUE, FALSE, 5);
