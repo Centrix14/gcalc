@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <gtk/gtk.h>
 
 /*
- * gcalc - graphical calculator v0.3
+ * gcalc - graphical calculator v0.4
  * by Centrix
  * 24.09.2019
  */
@@ -52,6 +53,18 @@ void eq_bttn_click(GtkWidget *bttn, gpointer label) {
 				return;
 			}
 			break;
+		case '^': 
+			sprintf(tmp, "%f", pow(num1, num2));
+			break;	
+		case 'R':
+			sprintf(tmp, "%f", sqrt( atof(gtk_label_get_text(GTK_LABEL(label))) ));
+			break;
+		case 'I':
+			sprintf(tmp, "%d", -atoi( gtk_label_get_text(GTK_LABEL(label)) ));
+			break;
+		case '%':
+			sprintf(tmp, "%d", num1%num2);
+			break;
 	}
 	
 	gtk_label_set_text(GTK_LABEL(label), tmp);
@@ -78,10 +91,10 @@ void w_bttn_click(GtkWidget *bttn, gpointer label) {
 int main(int argc, char *argv[]) {
 	GtkWidget *window;
 	GtkWidget *bttn_1, *bttn_2, *bttn_3, *bttn_4, *bttn_5, *bttn_6, *bttn_7, *bttn_8, *bttn_9, *bttn_0;
-	GtkWidget *bttn_sum, *bttn_subt, *bttn_mult, *bttn_div, *bttn_eq, *bttn_c;
+	GtkWidget *bttn_sum, *bttn_subt, *bttn_mult, *bttn_div, *bttn_eq, *bttn_c, *bttn_pow, *bttn_sqrt, *bttn_inv, *bttn_dbm;
 	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w;
 	GtkWidget *answer;
-	GtkWidget *num_pad, *row1, *row2, *row3, *row4, *row5, *mbox;
+	GtkWidget *num_pad, *row1, *row2, *row3, *row4, *row5, *row6, *mbox;
 
 	gtk_init(&argc, &argv);
 
@@ -115,12 +128,16 @@ int main(int argc, char *argv[]) {
 	bttn_div = gtk_button_new_with_label("/");
 	bttn_eq = gtk_button_new_with_label("=");
 	bttn_c = gtk_button_new_with_label("C");
+	bttn_pow = gtk_button_new_with_label("^");
+	bttn_sqrt = gtk_button_new_with_label("R");
+	bttn_inv = gtk_button_new_with_label("I");
+	bttn_dbm = gtk_button_new_with_label("%");
 
 	// Специальные кнопки
 	bttn_tn1 = gtk_button_new_with_label("TN1");
 	bttn_tn2 = gtk_button_new_with_label("TN2");
-	bttn_r = gtk_button_new_with_label("R");
-	bttn_w = gtk_button_new_with_label("W");
+	bttn_r = gtk_button_new_with_label("BR");
+	bttn_w = gtk_button_new_with_label("BW");
 
 	// Подключаем кнопки цифр к функции num_bttn_click
 	g_signal_connect(G_OBJECT(bttn_1), "clicked", G_CALLBACK(num_bttn_click), answer);
@@ -137,11 +154,15 @@ int main(int argc, char *argv[]) {
 	// Связываем кнопку C с функцией c_bttn_click
 	g_signal_connect(G_OBJECT(bttn_c), "clicked", G_CALLBACK(c_bttn_click), answer);
 
-	// Связываем кнопки +, -, x, / с функцией op_bttn_click
+	// Связываем кнопки +, -, x, / с, ^, R, I, % функцией op_bttn_click
 	g_signal_connect(G_OBJECT(bttn_sum), "clicked", G_CALLBACK(op_bttn_click), NULL);
 	g_signal_connect(G_OBJECT(bttn_subt), "clicked", G_CALLBACK(op_bttn_click), NULL);
 	g_signal_connect(G_OBJECT(bttn_mult), "clicked", G_CALLBACK(op_bttn_click), NULL);
 	g_signal_connect(G_OBJECT(bttn_div), "clicked", G_CALLBACK(op_bttn_click), NULL);
+	g_signal_connect(G_OBJECT(bttn_pow), "clicked", G_CALLBACK(op_bttn_click), NULL);
+	g_signal_connect(G_OBJECT(bttn_sqrt), "clicked", G_CALLBACK(op_bttn_click), NULL);
+	g_signal_connect(G_OBJECT(bttn_inv), "clicked", G_CALLBACK(op_bttn_click), NULL);
+	g_signal_connect(G_OBJECT(bttn_dbm), "clicked", G_CALLBACK(op_bttn_click), NULL);
 
 	// Связываем кнопку = с функцией eq_bttn_click
 	g_signal_connect(G_OBJECT(bttn_eq), "clicked", G_CALLBACK(eq_bttn_click), answer);
@@ -158,6 +179,7 @@ int main(int argc, char *argv[]) {
 	row3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	row4 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	row5 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	row6 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 
 	// Первый ряд кнопок
 	gtk_box_pack_start(GTK_BOX(row1), bttn_1, TRUE, FALSE, 5);
@@ -183,11 +205,17 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(row4), bttn_eq, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row4), bttn_c, TRUE, FALSE, 5);
 
-	// Четвёртый ряд кнопок
-	gtk_box_pack_start(GTK_BOX(row5), bttn_tn1, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row5), bttn_tn2, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row5), bttn_r, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row5), bttn_w, TRUE, FALSE, 5);
+	// Пятый ряд кнопок
+	gtk_box_pack_start(GTK_BOX(row5), bttn_pow, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row5), bttn_sqrt, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row5), bttn_inv, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row5), bttn_dbm, TRUE, FALSE, 5);
+
+	// Шестой ряд кнопок
+	gtk_box_pack_start(GTK_BOX(row6), bttn_tn1, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row6), bttn_tn2, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row6), bttn_r, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row6), bttn_w, TRUE, FALSE, 5);
 
 	// num_pad - панель ввода чисел и операций
 	num_pad = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -198,6 +226,7 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(num_pad), row3, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(num_pad), row4, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(num_pad), row5, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(num_pad), row6, TRUE, FALSE, 5);
 
 	// mbox - основной контейнер
 	mbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
