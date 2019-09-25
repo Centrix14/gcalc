@@ -9,84 +9,18 @@
  * 24.09.2019
  */
 
+void num_bttn_click(GtkWidget *bttn, gpointer label);
+void c_bttn_click(GtkWidget *bttn, gpointer label);
+void op_bttn_click(GtkWidget *bttn, gpointer data);
+void eq_bttn_click(GtkWidget *bttn, gpointer label);
+void tn1_bttn_click(GtkWidget *bttn, gpointer data);
+void tn2_bttn_click(GtkWidget *bttn, gpointer data);
+void r_bttn_click(GtkWidget *bttn, gpointer label);
+void w_bttn_click(GtkWidget *bttn, gpointer label);
+void w_bttn_click(GtkWidget *bttn, gpointer label);
+
 int num1 = 0, num2 = 0, op = 0;
-int state = 0;
 int *num_ptr = &num1;
-
-void num_bttn_click(GtkWidget *bttn, gpointer label) {
-	char tmp[256];
-
-	*num_ptr = *num_ptr * 10 + atoi( gtk_button_get_label(GTK_BUTTON(bttn)) );
-
-	sprintf(tmp, "%d", *num_ptr);
-	gtk_label_set_text(GTK_LABEL(label), tmp);
-}
-
-void c_bttn_click(GtkWidget *bttn, gpointer label) {
-	*num_ptr = 0;
-	gtk_label_set_text(GTK_LABEL(label), "0");
-}
-
-void op_bttn_click(GtkWidget *bttn, gpointer data) {
-	num_ptr = &num2;
-	op = gtk_button_get_label(GTK_BUTTON(bttn))[0];
-}
-
-void eq_bttn_click(GtkWidget *bttn, gpointer label) {
-	char tmp[256];
-
-	switch (op) {
-		case '+': 
-			sprintf(tmp, "%d", num1+num2);
-			break;
-		case '-': 
-			sprintf(tmp, "%d", num1-num2);
-			break;
-		case 'x': 
-			sprintf(tmp, "%d", num1*num2);
-			break;
-		case '/': 
-			if ( num2 != 0 )
-				sprintf(tmp, "%d", num1/num2);
-			else {
-				gtk_label_set_text(GTK_LABEL(label), "The surgery doesn't make sense.");
-				return;
-			}
-			break;
-		case '^': 
-			sprintf(tmp, "%f", pow(num1, num2));
-			break;	
-		case 'R':
-			sprintf(tmp, "%f", sqrt( atof(gtk_label_get_text(GTK_LABEL(label))) ));
-			break;
-		case 'I':
-			sprintf(tmp, "%d", -atoi( gtk_label_get_text(GTK_LABEL(label)) ));
-			break;
-		case '%':
-			sprintf(tmp, "%d", num1%num2);
-			break;
-	}
-	
-	gtk_label_set_text(GTK_LABEL(label), tmp);
-}
-
-void tn1_bttn_click(GtkWidget *bttn, gpointer data) {
-	num_ptr = &num1;
-}
-
-void tn2_bttn_click(GtkWidget *bttn, gpointer data) {
-	num_ptr = &num2;
-}
-
-void r_bttn_click(GtkWidget *bttn, gpointer label) {
-	char tmp[256];
-	sprintf(tmp, "%d", *num_ptr);
-	gtk_label_set_text(GTK_LABEL(label), tmp);
-}
-
-void w_bttn_click(GtkWidget *bttn, gpointer label) {
-	*num_ptr = atoi( gtk_label_get_text(GTK_LABEL(label)) );
-}
 
 int main(int argc, char *argv[]) {
 	GtkWidget *window;
@@ -241,4 +175,79 @@ int main(int argc, char *argv[]) {
 
 	gtk_main(); 
 	return 0;
+}
+
+void num_bttn_click(GtkWidget *bttn, gpointer label) {
+	char tmp[256];
+
+	*num_ptr = *num_ptr * 10 + atoi( gtk_button_get_label(GTK_BUTTON(bttn)) );
+
+	sprintf(tmp, "%d", *num_ptr);
+	gtk_label_set_text(GTK_LABEL(label), tmp);
+}
+
+void c_bttn_click(GtkWidget *bttn, gpointer label) {
+	*num_ptr = 0;
+	gtk_label_set_text(GTK_LABEL(label), "0");
+}
+
+void op_bttn_click(GtkWidget *bttn, gpointer data) {
+	num_ptr = &num2;
+	op = gtk_button_get_label(GTK_BUTTON(bttn))[0];
+}
+
+void eq_bttn_click(GtkWidget *bttn, gpointer label) {
+	char tmp[256];
+
+	switch (op) {
+		case '+': 
+			sprintf(tmp, "%d", num1+num2);
+			break;
+		case '-': 
+			sprintf(tmp, "%d", num1-num2);
+			break;
+		case 'x': 
+			sprintf(tmp, "%d", num1*num2);
+			break;
+		case '/': 
+			if ( num2 != 0 )
+				sprintf(tmp, "%d", num1/num2);
+			else {
+				gtk_label_set_text(GTK_LABEL(label), "The surgery doesn't make sense.");
+				return;
+			}
+			break;
+		case '^': 
+			sprintf(tmp, "%f", pow(num1, num2));
+			break;	
+		case 'R':
+			sprintf(tmp, "%f", sqrt( atof(gtk_label_get_text(GTK_LABEL(label))) ));
+			break;
+		case 'I':
+			sprintf(tmp, "%d", -atoi( gtk_label_get_text(GTK_LABEL(label)) ));
+			break;
+		case '%':
+			sprintf(tmp, "%d", num1%num2);
+			break;
+	}
+	
+	gtk_label_set_text(GTK_LABEL(label), tmp);
+}
+
+void tn1_bttn_click(GtkWidget *bttn, gpointer data) {
+	num_ptr = &num1;
+}
+
+void tn2_bttn_click(GtkWidget *bttn, gpointer data) {
+	num_ptr = &num2;
+}
+
+void r_bttn_click(GtkWidget *bttn, gpointer label) {
+	char tmp[256];
+	sprintf(tmp, "%d", *num_ptr);
+	gtk_label_set_text(GTK_LABEL(label), tmp);
+}
+
+void w_bttn_click(GtkWidget *bttn, gpointer label) {
+	*num_ptr = atoi( gtk_label_get_text(GTK_LABEL(label)) );
 }
