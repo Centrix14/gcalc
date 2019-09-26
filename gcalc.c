@@ -5,7 +5,7 @@
 #include <gtk/gtk.h>
 
 /*
- * gcalc - graphical calculator v0.5
+ * gcalc - graphical calculator v0.5.1
  * by Centrix
  * 26.09.2019
  */
@@ -22,6 +22,7 @@ void w_bttn_click(GtkWidget *bttn, gpointer label);
 
 int num1 = 0, num2 = 0, op = 0;
 int *num_ptr = &num1;
+GtkWidget *bttn_stack_mode;
 
 enum _ops { sum, subt, mult, divs, powr, srt, inv, dbm, sino, coso, tano, asino, acoso, atano, sinho, cosho };
 
@@ -32,14 +33,14 @@ int main(int argc, char *argv[]) {
 	GtkWidget *bttn_cos, *bttn_sin, *bttn_tan, *bttn_acos, *bttn_asin, *bttn_atan, *bttn_cosh, *bttn_sinh;
 	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w;
 	GtkWidget *answer;
-	GtkWidget *num_pad, *row1, *row2, *row3, *row4, *row5, *row6, *row7, *row8, *mbox;
+	GtkWidget *num_pad, *top_pad, *row1, *row2, *row3, *row4, *row5, *row6, *row7, *row8, *mbox;
 
 	gtk_init(&argc, &argv);
 
 	// Создаём окно
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "gcalc");
-	gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
+	gtk_window_set_default_size(GTK_WINDOW(window), 300, 500);
 
 	// При закрытии окна программа завершается
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -85,6 +86,8 @@ int main(int argc, char *argv[]) {
 	bttn_r = gtk_button_new_with_label("BR");
 	bttn_w = gtk_button_new_with_label("BW");
 
+	bttn_stack_mode = gtk_toggle_button_new_with_label("Stack mode");
+
 	// Подключаем кнопки цифр к функции num_bttn_click
 	g_signal_connect(G_OBJECT(bttn_1), "clicked", G_CALLBACK(num_bttn_click), answer);
 	g_signal_connect(G_OBJECT(bttn_2), "clicked", G_CALLBACK(num_bttn_click), answer);
@@ -126,6 +129,8 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(G_OBJECT(bttn_tn2), "clicked", G_CALLBACK(tn2_bttn_click), NULL);
 	g_signal_connect(G_OBJECT(bttn_r), "clicked", G_CALLBACK(r_bttn_click), answer);
 	g_signal_connect(G_OBJECT(bttn_w), "clicked", G_CALLBACK(w_bttn_click), answer);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bttn_stack_mode), FALSE);
 
 	// Ряды кнопок
 	row1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -198,11 +203,15 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(num_pad), row7, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(num_pad), row8, TRUE, FALSE, 5);
 
+	top_pad = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	gtk_box_pack_start(GTK_BOX(top_pad), bttn_stack_mode, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(top_pad), answer, TRUE, FALSE, 5);
+
 	// mbox - основной контейнер
 	mbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 
 	// Добавляем num_pad и answer в mbox
-	gtk_box_pack_start(GTK_BOX(mbox), answer, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(mbox), top_pad, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(mbox), num_pad, TRUE, FALSE, 5);
 
 	// Добавляем основной контейнер к окну
@@ -298,7 +307,12 @@ void eq_bttn_click(GtkWidget *bttn, gpointer label) {
 			sprintf(tmp, "%e", cosh( atof(gtk_label_get_text(GTK_LABEL(label))) ));
 			break;
 	}
-	
+
+	if ( gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(bttn_stack_mode)) == TRUE ) {
+		num1 = atof(tmp);
+		num_ptr = &num2;
+	}
+
 	gtk_label_set_text(GTK_LABEL(label), tmp);
 }
 
