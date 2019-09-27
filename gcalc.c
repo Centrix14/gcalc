@@ -294,6 +294,7 @@ int find(char *list[], const char *elm, int range) {
 
 void op_bttn_click(GtkWidget *bttn, gpointer data) {
 	char *operations[] = {"+", "-", "x", "/", "^", "R", "I", "%", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "log", "lg", "exp", "|n|", "cl", "fl"};
+	num2 = 0;
 	num_ptr = &num2;
 	op = find( operations, gtk_button_get_label(GTK_BUTTON(bttn)), 24 );
 }
