@@ -1,12 +1,13 @@
 # gcalc - graphical calculator
 
-## Overview of features available in gcalc v0.5.2
+## Overview of features available in gcalc v0.6.1
   + Arithmetic operations: `+`, `-`, `x`, `/`, `%` (remainder of division)
   + Power operations: `^`, `R` (square root), `log` (natural logarithm), `lg`, `exp` (calculating the exponent)
   + The change of sign: `I`(sign change to the opposite), `|n|` (module)
   + Trigonometric operations: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
   + Hyperbolic trigonometric operations: `sinh`, `cosh`, `tanh`
-  + Rounding: `cl` (the big way), `fl` (down)
+  + Rounding: `R>` (the big way), `R<` (down)
+  + Decimal: `,` (puts a decimal point in a number)
 
 ## Other calculator functions  
   + `TN1`/`TN2` - Switching to the first/second operand buffer
