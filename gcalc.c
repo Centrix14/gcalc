@@ -5,7 +5,7 @@
 #include <gtk/gtk.h>
 
 /*
- * gcalc - graphical calculator v0.6.1
+ * gcalc - graphical calculator v0.6.2
  * by Centrix
  * 03.10.2019
  */
@@ -20,23 +20,24 @@ void r_bttn_click(GtkWidget *bttn, gpointer label);
 void w_bttn_click(GtkWidget *bttn, gpointer label);
 void fp_bttn_click(GtkWidget *bttn, gpointer label);
 void quick_op_bttn_click(GtkWidget *bttn, gpointer label);
+void del_bttn_click(GtkWidget *bttn, gpointer label);
 
 double num1 = 0, num2 = 0;
 double *num_ptr = &num1;
 int op = 0, whole = 10, point = 1;
 GtkWidget *bttn_stack_mode;
 
-enum _ops { sum, subt, mult, divs, powr, srt, inv, dbm, sino, coso, tano, asino, acoso, atano, sinho, cosho, tanho, logo, log10o, expo, modo, ceilo, flooro };
+enum _ops { sum, subt, mult, divs, powr, srt, inv, dbm, sino, coso, tano, asino, acoso, atano, sinho, cosho, tanho, logo, log10o, expo, modo, ceilo, flooro, pio, eo, facto, delo };
 
 int main(int argc, char *argv[]) {
 	GtkWidget *window;
 	GtkWidget *bttn_1, *bttn_2, *bttn_3, *bttn_4, *bttn_5, *bttn_6, *bttn_7, *bttn_8, *bttn_9, *bttn_0;
 	GtkWidget *bttn_sum, *bttn_subt, *bttn_mult, *bttn_div, *bttn_eq, *bttn_c, *bttn_pow, *bttn_sqrt, *bttn_inv, *bttn_dbm;
 	GtkWidget *bttn_cos, *bttn_sin, *bttn_tan, *bttn_acos, *bttn_asin, *bttn_atan, *bttn_cosh, *bttn_sinh, *bttn_tanh, *bttn_log, *bttn_log10;
-	GtkWidget *bttn_exp, *bttn_ceil, *bttn_mod, *bttn_floor, *bttn_fp;
-	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w;
+	GtkWidget *bttn_exp, *bttn_ceil, *bttn_mod, *bttn_floor, *bttn_fp, *bttn_pi, *bttn_e, *bttn_fact;
+	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w, *bttn_del;
 	GtkWidget *answer;
-	GtkWidget *num_pad, *top_pad, *row1, *row2, *row3, *row4, *row5, *row6, *row7, *row8, *row9, *row10, *mbox;
+	GtkWidget *num_pad, *top_pad, *row1, *row2, *row3, *row4, *row5, *row6, *row7, *row8, *row9, *row10, *row11, *mbox;
 
 	gtk_init(&argc, &argv);
 
@@ -78,6 +79,9 @@ int main(int argc, char *argv[]) {
 	bttn_sqrt = gtk_button_new_with_label("R");
 	bttn_inv = gtk_button_new_with_label("I");
 	bttn_dbm = gtk_button_new_with_label("%");
+	bttn_fact = gtk_button_new_with_label("!");
+	bttn_pi = gtk_button_new_with_label("Pi");
+	bttn_e = gtk_button_new_with_label("E");
 
 	// Основные тригонометрические функции
 	bttn_sin = gtk_button_new_with_label("sin");
@@ -104,7 +108,7 @@ int main(int argc, char *argv[]) {
 	bttn_mod = gtk_button_new_with_label("|n|");
 	bttn_floor = gtk_button_new_with_label("R<");
 
-	// Специальная кнопка
+	// Кнопка создания десятичной точки
 	bttn_fp = gtk_button_new_with_label(",");
 
 	// Специальные кнопки
@@ -112,6 +116,7 @@ int main(int argc, char *argv[]) {
 	bttn_tn2 = gtk_button_new_with_label("TN2");
 	bttn_r = gtk_button_new_with_label("BR");
 	bttn_w = gtk_button_new_with_label("BW");
+	bttn_del = gtk_button_new_with_label("<x");
 
 	// Переключать для перехода в режим стека
 	bttn_stack_mode = gtk_toggle_button_new_with_label("Stack mode");
@@ -157,12 +162,18 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(G_OBJECT(bttn_mod), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
 	g_signal_connect(G_OBJECT(bttn_ceil), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
 	g_signal_connect(G_OBJECT(bttn_floor), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
+	g_signal_connect(G_OBJECT(bttn_fact), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
+	g_signal_connect(G_OBJECT(bttn_pi), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
+	g_signal_connect(G_OBJECT(bttn_e), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
+	g_signal_connect(G_OBJECT(bttn_del), "clicked", G_CALLBACK(quick_op_bttn_click), answer);
 
 	// Связываем кнопку = с функцией eq_bttn_click
 	g_signal_connect(G_OBJECT(bttn_eq), "clicked", G_CALLBACK(eq_bttn_click), answer);
 
 	// Ввод запятой для десятичной дроби
 	g_signal_connect(G_OBJECT(bttn_fp), "clicked", G_CALLBACK(fp_bttn_click), answer);
+
+	g_signal_connect(G_OBJECT(bttn_del), "clicked", G_CALLBACK(del_bttn_click), answer);
 
 	// Связывакм кнопки tn1, tn2, r, w с функциями tn1_bttn_click, tn2_bttn_click, r_bttn_click, w_bttn_click
 	g_signal_connect(G_OBJECT(bttn_tn1), "clicked", G_CALLBACK(tn1_bttn_click), NULL);
@@ -172,6 +183,7 @@ int main(int argc, char *argv[]) {
 
 	// Выключаем переключатель
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bttn_stack_mode), FALSE);
+	gtk_label_set_selectable(GTK_LABEL(answer), TRUE);
 
 	// Ряды кнопок
 	row1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -184,6 +196,7 @@ int main(int argc, char *argv[]) {
 	row8 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	row9 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	row10 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	row11 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 
 	// Первый ряд кнопок
 	gtk_box_pack_start(GTK_BOX(row1), bttn_1, TRUE, FALSE, 5);
@@ -240,10 +253,16 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(row9), bttn_fp, TRUE, FALSE, 5);
 
 	// Десятый ряд кнопок
-	gtk_box_pack_start(GTK_BOX(row10), bttn_tn1, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row10), bttn_tn2, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row10), bttn_r, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row10), bttn_w, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row10), bttn_fact, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row10), bttn_pi, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row10), bttn_e, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row10), bttn_del, TRUE, FALSE, 5);
+
+	// Одиннадцатый ряд кнопок
+	gtk_box_pack_start(GTK_BOX(row11), bttn_tn1, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row11), bttn_tn2, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row11), bttn_r, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row11), bttn_w, TRUE, FALSE, 5);
 
 	// num_pad - панель ввода чисел и операций
 	num_pad = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -259,6 +278,7 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(num_pad), row8, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(num_pad), row9, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(num_pad), row10, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(num_pad), row11, TRUE, FALSE, 5);
 
 	top_pad = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_pack_start(GTK_BOX(top_pad), bttn_stack_mode, TRUE, FALSE, 5);
@@ -426,12 +446,17 @@ void fp_bttn_click(GtkWidget *bttn, gpointer label) {
 	point = 10;
 }
 
+int factorial(int n) {
+	if ( !n ) return 1;
+	return n*factorial(n-1);
+}
+
 // Обрабатывает специальные кнопки быстрых операций
 void quick_op_bttn_click(GtkWidget *bttn, gpointer label) {
-	char *operations[] = {"I", "|n|", "cl", "fl"};
+	char *operations[] = {"I", "|n|", "cl", "fl", "Pi", "E", "!"};
 	char tmp[256] = "?";
 
-	switch (find(operations, gtk_button_get_label(GTK_BUTTON(bttn)), 4)) {
+	switch (find(operations, gtk_button_get_label(GTK_BUTTON(bttn)), 7)) {
 		case 0:
 			sprintf(tmp, "%f", -atof(gtk_label_get_text(GTK_LABEL(label))));
 			break;
@@ -444,6 +469,15 @@ void quick_op_bttn_click(GtkWidget *bttn, gpointer label) {
 		case 3:
 			sprintf(tmp, "%f", floor( atof(gtk_label_get_text(GTK_LABEL(label))) ));
 			break;
+		case 4:
+			sprintf(tmp, "3,1415926535");
+			break;
+		case 5:
+			sprintf(tmp, "2,7182818284");
+			break;
+		case 6:
+			sprintf(tmp, "%d", factorial( atoi(gtk_label_get_text(GTK_LABEL(label))) ));
+			break;
 	}
 
 	if ( gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(bttn_stack_mode)) == TRUE ) {
@@ -451,5 +485,20 @@ void quick_op_bttn_click(GtkWidget *bttn, gpointer label) {
 		num_ptr = &num2;
 	}
 
+	gtk_label_set_text(GTK_LABEL(label), tmp);
+}
+
+void del_bttn_click(GtkWidget *bttn, gpointer label) {
+	char tmp[256];
+
+	if ( point == 1 ) {
+		*num_ptr = ( *num_ptr-((int)*num_ptr % 10) ) / 10;
+		sprintf(tmp, "%d", (int)*num_ptr);
+	}
+	else {
+		point /= 10;
+		*num_ptr = ( ( *num_ptr * point ) - ( (int)(*num_ptr * point) % 10 ) ) / point;
+		sprintf(tmp, "%f", *num_ptr);
+	}
 	gtk_label_set_text(GTK_LABEL(label), tmp);
 }
