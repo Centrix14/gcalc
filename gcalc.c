@@ -21,6 +21,7 @@ void w_bttn_click(GtkWidget *bttn, gpointer label);
 void fp_bttn_click(GtkWidget *bttn, gpointer label);
 void quick_op_bttn_click(GtkWidget *bttn, gpointer label);
 void del_bttn_click(GtkWidget *bttn, gpointer label);
+void af_bttn_click(GtkWidget *bttn, gpointer label);
 
 double num1 = 0, num2 = 0;
 double *num_ptr = &num1;
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
 	GtkWidget *bttn_sum, *bttn_subt, *bttn_mult, *bttn_div, *bttn_eq, *bttn_c, *bttn_pow, *bttn_sqrt, *bttn_inv, *bttn_dbm;
 	GtkWidget *bttn_cos, *bttn_sin, *bttn_tan, *bttn_acos, *bttn_asin, *bttn_atan, *bttn_cosh, *bttn_sinh, *bttn_tanh, *bttn_log, *bttn_log10;
 	GtkWidget *bttn_exp, *bttn_ceil, *bttn_mod, *bttn_floor, *bttn_fp, *bttn_pi, *bttn_e, *bttn_fact;
-	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w, *bttn_del;
+	GtkWidget *bttn_tn1, *bttn_tn2, *bttn_r, *bttn_w, *bttn_del, *bttn_adv_features;
 	GtkWidget *answer;
 	GtkWidget *num_pad, *top_pad, *row1, *row2, *row3, *row4, *row5, *row6, *row7, *row8, *row9, *row10, *row11, *mbox;
 
@@ -111,6 +112,9 @@ int main(int argc, char *argv[]) {
 	// Кнопка создания десятичной точки
 	bttn_fp = gtk_button_new_with_label(",");
 
+	// Кнопка расширенных возможностей
+	bttn_adv_features = gtk_button_new_with_label("AF");
+
 	// Специальные кнопки
 	bttn_tn1 = gtk_button_new_with_label("TN1");
 	bttn_tn2 = gtk_button_new_with_label("TN2");
@@ -119,7 +123,7 @@ int main(int argc, char *argv[]) {
 	bttn_del = gtk_button_new_with_label("<x");
 
 	// Переключать для перехода в режим стека
-	bttn_stack_mode = gtk_toggle_button_new_with_label("Stack mode");
+	bttn_stack_mode = gtk_toggle_button_new_with_label("SM");
 
 	// Подключаем кнопки цифр к функции num_bttn_click
 	g_signal_connect(G_OBJECT(bttn_1), "clicked", G_CALLBACK(num_bttn_click), answer);
@@ -173,7 +177,10 @@ int main(int argc, char *argv[]) {
 	// Ввод запятой для десятичной дроби
 	g_signal_connect(G_OBJECT(bttn_fp), "clicked", G_CALLBACK(fp_bttn_click), answer);
 
+	// Стирание самой правой цифры
 	g_signal_connect(G_OBJECT(bttn_del), "clicked", G_CALLBACK(del_bttn_click), answer);
+
+	g_signal_connect(G_OBJECT(bttn_adv_features), "clicked", G_CALLBACK(af_bttn_click), NULL);
 
 	// Связывакм кнопки tn1, tn2, r, w с функциями tn1_bttn_click, tn2_bttn_click, r_bttn_click, w_bttn_click
 	g_signal_connect(G_OBJECT(bttn_tn1), "clicked", G_CALLBACK(tn1_bttn_click), NULL);
@@ -256,7 +263,7 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(row10), bttn_fact, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row10), bttn_pi, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(row10), bttn_e, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(row10), bttn_del, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(row10), bttn_adv_features, TRUE, FALSE, 5);
 
 	// Одиннадцатый ряд кнопок
 	gtk_box_pack_start(GTK_BOX(row11), bttn_tn1, TRUE, FALSE, 5);
@@ -283,6 +290,7 @@ int main(int argc, char *argv[]) {
 	top_pad = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_pack_start(GTK_BOX(top_pad), bttn_stack_mode, TRUE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(top_pad), answer, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(top_pad), bttn_del, TRUE, FALSE, 5);
 
 	// mbox - основной контейнер
 	mbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -470,10 +478,10 @@ void quick_op_bttn_click(GtkWidget *bttn, gpointer label) {
 			sprintf(tmp, "%f", floor( atof(gtk_label_get_text(GTK_LABEL(label))) ));
 			break;
 		case 4:
-			sprintf(tmp, "3,1415926535");
+			sprintf(tmp, "3.1415926535");
 			break;
 		case 5:
-			sprintf(tmp, "2,7182818284");
+			sprintf(tmp, "2.7182818284");
 			break;
 		case 6:
 			sprintf(tmp, "%d", factorial( atoi(gtk_label_get_text(GTK_LABEL(label))) ));
@@ -501,4 +509,24 @@ void del_bttn_click(GtkWidget *bttn, gpointer label) {
 		sprintf(tmp, "%f", *num_ptr);
 	}
 	gtk_label_set_text(GTK_LABEL(label), tmp);
+}
+
+void af_bttn_click(GtkWidget *bttn, gpointer data) {
+	GtkWidget *dialog, *label, *bttn_ok, *content_box;
+	GtkWidget *mdbox;
+
+	dialog = gtk_dialog_new_with_buttons("Advanced features", NULL, (GtkDialogFlags)NULL, NULL);
+
+	content_box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+	label = gtk_label_new("There will be a panel of additional features.");
+	bttn_ok = gtk_button_new_with_label("ok");
+
+	mdbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+
+	gtk_box_pack_start(GTK_BOX(mdbox), label, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(mdbox), bttn_ok, TRUE, FALSE, 5);
+
+	gtk_container_add(GTK_CONTAINER(content_box), mdbox);
+	gtk_widget_show_all(dialog);
 }
