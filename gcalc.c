@@ -190,6 +190,7 @@ int main(int argc, char *argv[]) {
 
 	// Выключаем переключатель
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bttn_stack_mode), FALSE);
+	// Делаем текст выбираемым
 	gtk_label_set_selectable(GTK_LABEL(answer), TRUE);
 
 	// Ряды кнопок
@@ -512,21 +513,45 @@ void del_bttn_click(GtkWidget *bttn, gpointer label) {
 }
 
 void af_bttn_click(GtkWidget *bttn, gpointer data) {
-	GtkWidget *dialog, *label, *bttn_ok, *content_box;
-	GtkWidget *mdbox;
+	GtkWidget *dialog, *res, *bttn_convert, *entry_value_from, *entry_value_to, *cb_from, *cb_to;
+	GtkWidget *from_box, *to_box, *res_box, *content_box, *main_box;
 
 	dialog = gtk_dialog_new_with_buttons("Advanced features", NULL, (GtkDialogFlags)NULL, NULL);
 
 	content_box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-	label = gtk_label_new("There will be a panel of additional features.");
-	bttn_ok = gtk_button_new_with_label("ok");
+	entry_value_from = gtk_entry_new();
+	entry_value_to = gtk_entry_new();
 
-	mdbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	res = gtk_label_new("0");
+	bttn_convert = gtk_button_new_with_label("Convert");
 
-	gtk_box_pack_start(GTK_BOX(mdbox), label, TRUE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(mdbox), bttn_ok, TRUE, FALSE, 5);
+	cb_from = gtk_combo_box_text_new();
+	cb_to = gtk_combo_box_text_new();
 
-	gtk_container_add(GTK_CONTAINER(content_box), mdbox);
+	gtk_label_set_selectable(GTK_LABEL(res), TRUE);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(cb_from), "1");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(cb_to), "2");
+
+	from_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	to_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	res_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+
+	gtk_box_pack_start(GTK_BOX(from_box), cb_from, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(from_box), entry_value_from, TRUE, FALSE, 5);
+
+	gtk_box_pack_start(GTK_BOX(to_box), cb_to, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(to_box), entry_value_to, TRUE, FALSE, 5);
+
+	gtk_box_pack_start(GTK_BOX(res_box), bttn_convert, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(res_box), res, TRUE, FALSE, 5);
+	
+	main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+
+	gtk_box_pack_start(GTK_BOX(main_box), from_box, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(main_box), to_box, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(main_box), res_box, TRUE, FALSE, 5);
+
+	gtk_container_add(GTK_CONTAINER(content_box), main_box);
 	gtk_widget_show_all(dialog);
 }
