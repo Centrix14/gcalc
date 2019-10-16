@@ -15,5 +15,5 @@
   + `BW` - Write number to buffer
   + `C` - Cancellation buffer
   + `<x` - Removes the rightmost digit from a number
-  + `Stack mode` - Switch from buffer mode to stack mode. For example, enter 2+2, enable stack mode, press =, 4 will appear, now if you continue to press =, 2 will be added to the result of the previous operation.
+  + `SM` - Switch from buffer mode to stack mode. For example, enter 2+2, enable stack mode, press =, 4 will appear, now if you continue to press =, 2 will be added to the result of the previous operation.
   + `E`, `Pi` - Calculate the corresponding numbers
